@@ -29,17 +29,23 @@ public class createUser extends HttpServlet {
             response.setContentType("application/json; charset=utf-8");
             String uid = request.getParameter("uid");
             String gh = request.getParameter("gh");
-            User user = new User(uid, gh);
-            boolean flag = Create.create(user);
-            Map<String, Boolean> map = new HashMap<>();
-            ObjectMapper mapper = new ObjectMapper();
-            if(flag){
-                map.put("success", true);
+            if(!uid.contains("http://ehallplatform.xust.edu.cn")){
+                response.sendRedirect("https://xust.hangcc.cn/failed.html");
             } else {
-                map.put("success",  false);
+                User user = new User(uid, gh);
+                boolean flag = Create.create(user);
+                Map<String, Boolean> map = new HashMap<>();
+                ObjectMapper mapper = new ObjectMapper();
+                if(flag){
+                    map.put("success", true);
+                } else {
+                    map.put("success",  false);
+                }
+                QianDao.run(user);
+                Create.create(user);
+                response.sendRedirect("https://xust.hangcc.cn/success.html");
+                response.getWriter().write(mapper.writeValueAsString(map));
             }
-            QianDao.run(user);
-            response.getWriter().write(mapper.writeValueAsString(map));
         }
     }
 

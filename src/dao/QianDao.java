@@ -5,6 +5,8 @@ import domain.User;
 import main.SignIn;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Date;
 
@@ -22,5 +24,9 @@ public class QianDao {
         } else {
             template.update("insert into logs values(?, ?, ?)", gh, "success", new Date());
         }
+        FileWriter fileWriter = new FileWriter(new File("logs.txt"), true);
+        fileWriter.write("学号:" + gh + " 打卡" + (t == 0 ? "失败" : "成功"));
+        fileWriter.write("\n");
+        fileWriter.close();
     }
 }
