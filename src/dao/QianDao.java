@@ -17,7 +17,7 @@ public class QianDao {
         int t = 3; // 最多尝试3次终止
         String uid =  user.getUid();
         String gh = user.getGh();
-        while(t > 0 && !SignIn.start(new User(uid, gh))){
+        while(t > 0 && !SignIn.start(new User(uid, gh, "匿名用户"))){
             t--;
         }
         JdbcTemplate template = new JdbcTemplate(JDBCUtils.getDatasource());

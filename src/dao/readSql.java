@@ -21,7 +21,7 @@ public class readSql {
         for(Map<String, Object> map : maps){
             String uid = (String) map.get("uid");
             String gh = (String) map.get("gh");
-            User user = new User(uid, gh);
+            final User user = new User(uid, gh, "匿名用户");
             new Thread(new Runnable() {
                 @Override
                 public void run() {

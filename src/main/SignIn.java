@@ -19,6 +19,7 @@ import org.apache.http.util.EntityUtils;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.jws.soap.SOAPBinding;
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
@@ -28,6 +29,11 @@ import java.util.Date;
 import java.util.Set;
 
 public class SignIn {
+
+    public static void main(String[] args) throws IOException {
+        User user = new User("https://ehallplatform.xust.edu.cn/default/jkdk/mobile/mobJkdkAdd1.jsp?uid=MjYzNUJBQjA2RTU5OUI1RTFGMDQxMzVGNzk3RjlGNzc=", "16407020422", "曹博");
+        start(user);
+    }
 
     public static boolean start(User user) throws IOException {
         String url = user.getUid();
@@ -133,15 +139,28 @@ public class SignIn {
         tmpPostJson.put("xkdjkdk", tmpJsonObject);
         //
 
-
         CloseableHttpClient client = HttpClientBuilder.create().build();
         HttpPost httpPost = new HttpPost("http://ehallplatform.xust.edu.cn/default/jkdk/mobile/com.primeton.eos.jkdk.xkdjkdkbiz.jt.biz.ext");
         StringEntity entity = new StringEntity(tmpPostJson.toString(), "application/json", "utf-8");
         httpPost.setEntity(entity);
 
+        System.out.println(EntityUtils.toString(entity));
+
         httpPost.setHeader("Cookie", cookie);
         httpPost.setHeader("User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36");
         httpPost.setHeader("Referer", Referer);
+        httpPost.setHeader("Accept", "*/*");
+        httpPost.setHeader("Accept-Encoding", "gzip, deflate, br");
+        httpPost.setHeader("Accept-Language", "zh-CN,zh;q=0.9,en;q=0.8");
+        httpPost.setHeader("Connection", "keep-alive");
+        httpPost.setHeader("Content-Type", "text/json");
+        httpPost.setHeader("Host", "ehallplatform.xust.edu.cn");
+        httpPost.setHeader("Origin", "https://ehallplatform.xust.edu.cn");
+        httpPost.setHeader("Sec-Fetch-Dest", "empty");
+        httpPost.setHeader("Sec-Fetch-Mode", "cors");
+        httpPost.setHeader("Sec-Fetch-Site", "same-origin");
+        httpPost.setHeader("X-Requested-With", "XMLHttpRequest");
+        httpPost.setHeader("Content-Length", String.valueOf(entity.getContentLength()));
 
         CloseableHttpResponse response = client.execute(httpPost);
         StatusLine statusLine = response.getStatusLine();

@@ -3,14 +3,9 @@ package domain;
 public class User {
     private String uid;
     private String gh;
-    private String name;
+    private String name = "匿名用户";
 
     public User() {
-    }
-
-    public User(String uid, String gh) {
-        this.uid = uid;
-        this.gh = gh;
     }
 
     public User(String uid, String gh, String name) {

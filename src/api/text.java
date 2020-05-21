@@ -13,13 +13,17 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
-@WebServlet("/ShowAllUser")
-public class ShowAllUser extends HttpServlet {
+@WebServlet("/text")
+public class text extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        JdbcTemplate template = new JdbcTemplate(JDBCUtils.getDatasource());
-        List<User> query = template.query("select * from user", new BeanPropertyRowMapper<>(User.class));
-        request.setAttribute("allUser", query);
-        request.getRequestDispatcher("/showAllUser.jsp").forward(request, response);
+//        JdbcTemplate template = new JdbcTemplate(JDBCUtils.getDatasource());
+//        List<User> query = template.query("select * from user", new BeanPropertyRowMapper<>(User.class));
+//        request.setAttribute("allUser", query);
+//        try {
+//            request.getRequestDispatcher("/showAllUser.jsp").forward(request, response);
+//        } catch (ServletException e) {
+//            e.printStackTrace();
+//        }
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
