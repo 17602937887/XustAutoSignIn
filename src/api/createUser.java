@@ -41,7 +41,16 @@ public class createUser extends HttpServlet {
                 } else {
                     map.put("success",  false);
                 }
-                QianDao.run(user);
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            QianDao.run(user);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }).start();
                 Create.create(user);
                 response.sendRedirect("https://xust.hangcc.cn/success.html");
                 response.getWriter().write(mapper.writeValueAsString(map));

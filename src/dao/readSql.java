@@ -5,6 +5,7 @@ import domain.User;
 import main.SignIn;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import javax.jws.soap.SOAPBinding;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
@@ -20,7 +21,17 @@ public class readSql {
         for(Map<String, Object> map : maps){
             String uid = (String) map.get("uid");
             String gh = (String) map.get("gh");
-            QianDao.run(new User(uid, gh));
+            User user = new User(uid, gh);
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        QianDao.run(user);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
         }
     }
 }

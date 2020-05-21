@@ -8,7 +8,9 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.logging.SimpleFormatter;
 
 public class QianDao {
     public static void run(User user) throws IOException {
@@ -24,8 +26,8 @@ public class QianDao {
         } else {
             template.update("insert into logs values(?, ?, ?)", gh, "success", new Date());
         }
-        FileWriter fileWriter = new FileWriter(new File("logs.txt"), true);
-        fileWriter.write("学号:" + gh + " 打卡" + (t == 0 ? "失败" : "成功"));
+        FileWriter fileWriter = new FileWriter(new File(File.separator + "logs.txt"), true);
+        fileWriter.write("学号:" + gh + " 在时间:" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) + "打卡" + (t == 0 ? "失败" : "成功"));
         fileWriter.write("\n");
         fileWriter.close();
     }

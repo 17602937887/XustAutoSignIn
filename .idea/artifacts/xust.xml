@@ -1,0 +1,21 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="xust">
+    <output-path>$PROJECT_DIR$/out/artifacts/xust</output-path>
+    <root id="archive" name="xust.war">
+      <element id="dir-copy" path="$PROJECT_DIR$/web" />
+      <element id="directory" name="WEB-INF">
+        <element id="directory" name="classes">
+          <element id="module-output" name="XustAutoSignIn" />
+        </element>
+        <element id="directory" name="lib">
+          <element id="library" level="project" name="lib (6)" />
+          <element id="library" level="project" name="lib (5)" />
+          <element id="library" level="project" name="lib (4)" />
+          <element id="library" level="project" name="lib (3)" />
+          <element id="library" level="project" name="lib (2)" />
+          <element id="library" level="project" name="lib" />
+        </element>
+      </element>
+    </root>
+  </artifact>
+</component>
