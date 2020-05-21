@@ -1,5 +1,6 @@
 package main;
 
+import JdbcUtils.JDBCUtils;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import domain.User;
@@ -15,6 +16,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.jws.soap.SOAPBinding;
 import java.io.IOException;
@@ -119,6 +121,9 @@ public class SignIn {
         jsonObject.put("time", nowDay);
         jsonObject.put("guo", "中国");
         jsonObject.put("dm", tmpJsonObject.getString("BJDM"));
+
+        JdbcTemplate template = new JdbcTemplate(JDBCUtils.getDatasource());
+        template.update("update user set name = ? where gh = ?", tmpJsonObject.getString("xm"), tmpJsonObject.getString("gh"));
 
         JSONObject postJson = new JSONObject();
         postJson.put("xkdjkdk", jsonObject);
