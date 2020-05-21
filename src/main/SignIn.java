@@ -31,7 +31,7 @@ import java.util.Set;
 public class SignIn {
 
     public static void main(String[] args) throws IOException {
-        User user = new User("https://ehallplatform.xust.edu.cn/default/jkdk/mobile/mobJkdkAdd1.jsp?uid=MjYzNUJBQjA2RTU5OUI1RTFGMDQxMzVGNzk3RjlGNzc=", "16407020422", "曹博");
+        User user = new User("http://ehallplatform.xust.edu.cn/default/jkdk/mobile/mobJkdkAdd_test.jsp?uid=M0YyNkIxQzNGNkExQkVCRThGRkNFQTEzMzI2RjY4Q0U=", "16407020419", "陈航");
         start(user);
     }
 
@@ -144,8 +144,6 @@ public class SignIn {
         StringEntity entity = new StringEntity(tmpPostJson.toString(), "application/json", "utf-8");
         httpPost.setEntity(entity);
 
-        System.out.println(EntityUtils.toString(entity));
-
         httpPost.setHeader("Cookie", cookie);
         httpPost.setHeader("User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36");
         httpPost.setHeader("Referer", Referer);
@@ -160,7 +158,7 @@ public class SignIn {
         httpPost.setHeader("Sec-Fetch-Mode", "cors");
         httpPost.setHeader("Sec-Fetch-Site", "same-origin");
         httpPost.setHeader("X-Requested-With", "XMLHttpRequest");
-        httpPost.setHeader("Content-Length", String.valueOf(entity.getContentLength()));
+//        httpPost.setHeader("Content-Length", String.valueOf(entity.getContentLength()));
 
         CloseableHttpResponse response = client.execute(httpPost);
         StatusLine statusLine = response.getStatusLine();
