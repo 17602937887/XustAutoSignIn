@@ -18,6 +18,7 @@
     </style>
 </head>
 <body>
+<h1 style="text-align: center">成功加入自动签到的同学</h1>
 <table border="2" style="border-style: solid; border-color: greenyellow" align="center">
     <tr style="border-color: green;">
         <td>姓名</td>

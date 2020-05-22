@@ -1,8 +1,6 @@
 package api;
 
 import JdbcUtils.JDBCUtils;
-import dao.GetAllUser;
-import domain.Logs;
 import domain.User;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -12,34 +10,19 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.sql.DataSource;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-@WebServlet("/showAllUser")
-public class showAllUser extends HttpServlet {
+@WebServlet("/showAllUser2")
+public class showAllUser2 extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 
-//        JdbcTemplate template = new JdbcTemplate(JDBCUtils.getDatasource());
-//        template.update("insert into logs values(?, ?, ?)", "10086", "ceshi", new Date());
-//        List<Logs> query = template.query("select * from logs", new BeanPropertyRowMapper<Logs>(Logs.class));
-//        request.setAttribute("allLogs", query);
-//        request.getRequestDispatcher("/showLogs.jsp").forward(request, response);
-
         JdbcTemplate template = new JdbcTemplate(JDBCUtils.getDatasource());
-        List<Map<String, Object>> maps = template.queryForList("select * from user");
-        List<User> allUser = new ArrayList<>();
-        for(Map<String, Object> map : maps){
-            String uid = (String) map.get("uid");
-            String gh = (String) map.get("gh");
-            String name = (String) map.get("name");
-            allUser.add(new User(uid, gh, name));
-        }
+        template.update("insert into logs values(?, ?, ?)", "10000", "showAlluser2", new Date());
+        List<User> allUser = template.query("select * from user", new BeanPropertyRowMapper<>(User.class));
         request.setAttribute("allUser", allUser);
         request.getRequestDispatcher("/showAllUser.jsp").forward(request, response);
 
