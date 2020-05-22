@@ -20,6 +20,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.jws.soap.SOAPBinding;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
@@ -36,6 +37,15 @@ public class SignIn {
     }
 
     public static boolean start(User user) throws IOException {
+        JdbcTemplate template = new JdbcTemplate(JDBCUtils.getDatasource());
+        template.update("insert into logs values(?, ?, ?)", "10000", "SignIn执行", new Date());
+        File file = new File("demo.txt");
+        if(!file.exists()){
+            file.createNewFile();
+        }
+        FileWriter fileWriter = new FileWriter(file, true);
+        fileWriter.write("在" + new Date() + "进入入签到函数签到!\n");
+        fileWriter.close();
         String url = user.getUid();
         String gh = user.getGh();
         CloseableHttpClient client = HttpClientBuilder.create().build();
