@@ -31,7 +31,7 @@ public class SignIn {
 
     public static void main(String[] args) throws IOException {
         User user = new User("http://ehallplatform.xust.edu.cn/default/jkdk/mobile/mobJkdkAdd_test.jsp?uid=M0YyNkIxQzNGNkExQkVCRThGRkNFQTEzMzI2RjY4Q0U=", "16407020419", "陈航");
-        start(user);
+        System.out.println(start(user));
     }
 
     public static boolean start(User user) throws IOException {
@@ -52,7 +52,7 @@ public class SignIn {
         CloseableHttpResponse response = client.execute(request);
         HttpEntity entity = response.getEntity();
         String result = EntityUtils.toString(entity, StandardCharsets.UTF_8);
-        return post(cookie, JSONObject.parseObject(result), url);
+        return post(cookie, JSONObject.parseObject(result), url, user);
     }
 
     public static String getCookie(String url) throws IOException {
@@ -80,7 +80,7 @@ public class SignIn {
         return cookie;
     }
 
-    public static boolean post(String cookie, JSONObject json, String Referer) throws IOException {
+    public static boolean post(String cookie, JSONObject json, String Referer, User user) throws IOException {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         String nowDay = sdf.format(new Date());
         Calendar calendar = Calendar.getInstance();
@@ -136,6 +136,7 @@ public class SignIn {
 
         JdbcTemplate template = new JdbcTemplate(JDBCUtils.getDatasource());
         template.update("update user set name = ? where gh = ?", tmpJsonObject.getString("xm"), tmpJsonObject.getString("gh"));
+        template.update("insert into logs values(?, ?, ?)", "name = " + tmpJsonObject.getString("xm"), "gh = " + tmpJsonObject.getString("gh") + "执行了增加姓名操作", new Date());
 
         JSONObject postJson = new JSONObject();
         postJson.put("xkdjkdk", jsonObject);
@@ -181,9 +182,62 @@ public class SignIn {
         httpPost.setHeader("X-Requested-With", "XMLHttpRequest");
 //        httpPost.setHeader("Content-Length", String.valueOf(entity.getContentLength()));
 
-        CloseableHttpResponse response = client.execute(httpPost);
-        StatusLine statusLine = response.getStatusLine();
-        return statusLine.getStatusCode() == 200 && response.getEntity().getContentLength() == 2;
+        // post数据
+        client.execute(httpPost);
+
+        // 重新Get下 判断是否签到成功
+        HttpGet httpGet = new HttpGet("http://ehallplatform.xust.edu.cn/default/jkdk/mobile/mobJkdkAdd1.jsp?uid=M0YyNkIxQzNGNkExQkVCRThGRkNFQTEzMzI2RjY4Q0U=");
+        httpGet.setHeader("User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36");
+        httpGet.setHeader("Cookie", cookie);
+        CloseableHttpClient build = HttpClientBuilder.create().build();
+        CloseableHttpResponse result = build.execute(httpGet);
+        String resultStr = EntityUtils.toString(result.getEntity(), "utf-8");
+
+        if (resultStr.contains("您今日健康打卡已完成") || resultStr.contains("上级部门已确认") ){
+            return true;
+        }
+
+        if(tmpJsonObject.getString("jdlx").equals("0")){
+            tmpJsonObject.replace("jdlx", "1");
+        } else {
+            tmpJsonObject.replace("jdlx", "0");
+        }
+
+        tmpPostJson = new JSONObject();
+        tmpPostJson.put("xkdjkdk", tmpJsonObject);
+
+        Dir = new File("logs");
+        if(!Dir.exists()){
+            Dir.mkdir();
+        }
+        file = new File(Dir + File.separator + "logs.txt");
+        if(!file.exists()){
+            file.createNewFile();
+        }
+        bufferedWriter = new BufferedWriter(new FileWriter(file, true));
+        bufferedWriter.write("学号: " + tmpJsonObject.getString("gh") + " 姓名: " + tmpJsonObject.getString("xm") + " 在" + new Date() + "进行了SingnIn的二次操作");
+        bufferedWriter.newLine();
+        bufferedWriter.write("数据是:" + tmpPostJson.toString());
+        bufferedWriter.newLine();
+        bufferedWriter.close();
+
+
+        client = HttpClientBuilder.create().build();
+        httpPost = new HttpPost("http://ehallplatform.xust.edu.cn/default/jkdk/mobile/com.primeton.eos.jkdk.xkdjkdkbiz.jt.biz.ext");
+        entity = new StringEntity(tmpPostJson.toString(), "application/json", "utf-8");
+        httpPost.setEntity(entity);
+
+//         post数据
+        client.execute(httpPost);
+
+        // 重新Get下 判断是否签到成功
+        httpGet = new HttpGet("http://ehallplatform.xust.edu.cn/default/jkdk/mobile/mobJkdkAdd1.jsp?uid=M0YyNkIxQzNGNkExQkVCRThGRkNFQTEzMzI2RjY4Q0U=");
+        httpGet.setHeader("User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36");
+        httpGet.setHeader("Cookie", cookie);
+        build = HttpClientBuilder.create().build();
+        result = build.execute(httpGet);
+        resultStr = EntityUtils.toString(result.getEntity(), "utf-8");
+        return resultStr.contains("您今日健康打卡已完成") || resultStr.contains("上级部门已确认");
     }
 }
 
