@@ -41,8 +41,8 @@ public class createUser extends HttpServlet {
                 } else {
                     map.put("success",  false);
                 }
-                QianDao.run(user);
                 Create.create(user);
+                QianDao.run(user);
                 response.sendRedirect("/success.html");
                 response.getWriter().write(mapper.writeValueAsString(map));
             }
