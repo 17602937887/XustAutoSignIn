@@ -4,8 +4,6 @@ import JdbcUtils.JDBCUtils;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import domain.User;
-import org.apache.commons.httpclient.methods.RequestEntity;
-import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.StatusLine;
@@ -18,8 +16,9 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import javax.jws.soap.SOAPBinding;
-import java.io.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -27,7 +26,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Set;
 
-public class SignIn {
+public class SignIn2 {
 
     public static void main(String[] args) throws IOException {
         User user = new User("http://ehallplatform.xust.edu.cn/default/jkdk/mobile/mobJkdkAdd_test.jsp?uid=M0YyNkIxQzNGNkExQkVCRThGRkNFQTEzMzI2RjY4Q0U=", "16407020419", "陈航");
@@ -36,11 +35,14 @@ public class SignIn {
 
     public static boolean start(User user) throws IOException {
         JdbcTemplate template = new JdbcTemplate(JDBCUtils.getDatasource());
-        template.update("insert into logs values(?, ?, ?)", "10000", "SignIn执行" + user.getName(), new Date());
+        template.update("insert into logs values(?, ?, ?)", "10000", "SignIn执行", new Date());
         File file = new File("demo.txt");
         if(!file.exists()){
             file.createNewFile();
         }
+        FileWriter fileWriter = new FileWriter(file, true);
+        fileWriter.write("在" + new Date() + "进入入签到函数签到!\n");
+        fileWriter.close();
         String url = user.getUid();
         String gh = user.getGh();
         CloseableHttpClient client = HttpClientBuilder.create().build();
@@ -92,7 +94,6 @@ public class SignIn {
 
         //
         JSONObject tmpJsonObject = list.getJSONObject(0);
-
         tmpJsonObject.put("dm", tmpJsonObject.getString("BJDM"));
         tmpJsonObject.put("jrtwfw5", tmpJsonObject.get("jrtwfw5".toUpperCase()));
         tmpJsonObject.put("xxdz41", tmpJsonObject.getString("XXDZ4_1"));
@@ -145,24 +146,28 @@ public class SignIn {
         tmpPostJson.put("xkdjkdk", tmpJsonObject);
         //
 
-        File Dir = new File("logs");
-        if(!Dir.exists()){
-            Dir.mkdir();
-        }
-        File file = new File(Dir + File.separator + "logs.txt");
-        if(!file.exists()){
-            file.createNewFile();
-        }
-        BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file, true));
-        bufferedWriter.write("学号: " + tmpJsonObject.getString("gh") + " 姓名: " + tmpJsonObject.getString("xm") + " 在" + new Date() + "进行了SingnIn操作");
-        bufferedWriter.newLine();
-        bufferedWriter.write("数据是:" + tmpPostJson.toString());
-        bufferedWriter.newLine();
-        bufferedWriter.close();
+        StringBuilder sb = new StringBuilder(tmpPostJson.toString());
+        StringBuilder space = new StringBuilder();
+        space.append("\"procinstid\":\"\",");
+        space.append("\"id\":\"\",");
+        space.append("\"glkssj131\":\"\",");
+        space.append("\"gljssj132\":\"\",");
+        space.append("\"qtxx15\":null,");
+        space.append("\"sfzh\":\"\",");
+        space.append("\"zy\":\"\",");
+        space.append("\"zydm\":\"\",");
+        space.append("\"jg\":\"\",");
+        space.append("\"yx\":\"\",");
+        space.append("\"fcjtgj17Qt\":\"\",");
+        space.append("\"fcjtgj17\":\"\",");
+        space.append("\"ymtys\":\"\",");
+
+        sb.insert(12, space.toString());
+
 
         CloseableHttpClient client = HttpClientBuilder.create().build();
         HttpPost httpPost = new HttpPost("http://ehallplatform.xust.edu.cn/default/jkdk/mobile/com.primeton.eos.jkdk.xkdjkdkbiz.jt.biz.ext");
-        StringEntity entity = new StringEntity(tmpPostJson.toString(), "application/json", "utf-8");
+        StringEntity entity = new StringEntity(sb.toString(), "application/json", "utf-8");
         httpPost.setEntity(entity);
 
         httpPost.setHeader("Cookie", cookie);
@@ -181,6 +186,7 @@ public class SignIn {
         httpPost.setHeader("X-Requested-With", "XMLHttpRequest");
 //        httpPost.setHeader("Content-Length", String.valueOf(entity.getContentLength()));
 
+//        return true;
         CloseableHttpResponse response = client.execute(httpPost);
         StatusLine statusLine = response.getStatusLine();
         return statusLine.getStatusCode() == 200 && response.getEntity().getContentLength() == 2;
