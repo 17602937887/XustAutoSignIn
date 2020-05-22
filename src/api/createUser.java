@@ -29,9 +29,8 @@ public class createUser extends HttpServlet {
             response.setContentType("application/json; charset=utf-8");
             String uid = request.getParameter("uid");
             String gh = request.getParameter("gh");
-            System.out.println("uid = " + uid);
             if((!uid.contains("http://ehallplatform.xust.edu.cn")) && (!uid.contains("https://ehallplatform.xust.edu.cn"))){
-                response.sendRedirect("https://xust.hangcc.cn/failed.html");
+                response.sendRedirect("/failed.html");
             } else {
                 final User user = new User(uid, gh, "匿名用户");
                 boolean flag = Create.create(user);
@@ -44,7 +43,7 @@ public class createUser extends HttpServlet {
                 }
                 QianDao.run(user);
                 Create.create(user);
-                response.sendRedirect("https://xust.hangcc.cn/success.html");
+                response.sendRedirect("/success.html");
                 response.getWriter().write(mapper.writeValueAsString(map));
             }
         }
