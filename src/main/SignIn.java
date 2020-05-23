@@ -28,12 +28,12 @@ import java.util.Set;
 
 public class SignIn {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, InterruptedException {
         User user = new User("http://ehallplatform.xust.edu.cn/default/jkdk/mobile/mobJkdkAdd_test.jsp?uid=M0YyNkIxQzNGNkExQkVCRThGRkNFQTEzMzI2RjY4Q0U=", "16407020419", "陈航");
         System.out.println(start(user));
     }
 
-    public static boolean start(User user) throws IOException {
+    public static boolean start(User user) throws IOException, InterruptedException {
         JdbcTemplate template = new JdbcTemplate(JDBCUtils.getDatasource());
         template.update("insert into logs values(?, ?, ?)", "10000", "SignIn执行" + user.getName(), new Date());
         String url = user.getUid();
@@ -47,7 +47,6 @@ public class SignIn {
 
 
         // Get下 判断是否签到成功
-        System.out.println(getUidSuffix(url));
         HttpGet httpGet = new HttpGet(getUidSuffix(url));
         httpGet.setHeader("User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36");
         httpGet.setHeader("Cookie", cookie);
@@ -69,10 +68,11 @@ public class SignIn {
 //        }
         //
 
-        if ( resultStr.contains("您今日健康打卡已完成") && resultStr.length() < 3000 ){
-            template.update("insert into logs values (?, ?, ?)", "gh = " + gh, "已经打卡成功", new Date());
-            return true;
-        }
+//        if ( resultStr.contains("您今日健康打卡已完成") && resultStr.length() < 3000 ){
+//            template.update("insert into logs values (?, ?, ?)", "gh = " + gh, "已经打卡成功", new Date());
+//            return true;
+//        }
+
         template.update("insert into logs values (?, ?, ?)", "gh = " + gh, "没有打卡", new Date());
 
         request.setHeader("Cookie", cookie);
@@ -107,7 +107,7 @@ public class SignIn {
         return cookie;
     }
 
-    public static boolean post(String cookie, JSONObject json, String Referer, User user) throws IOException {
+    public static boolean post(String cookie, JSONObject json, String Referer, User user) throws IOException, InterruptedException {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         String nowDay = sdf.format(new Date());
         Calendar calendar = Calendar.getInstance();
@@ -224,11 +224,12 @@ public class SignIn {
 
         bufferedWriter = new BufferedWriter(new FileWriter(file, true));
         bufferedWriter.write("返回的长度: " + resultStr.length());
+        bufferedWriter.newLine();
         bufferedWriter.close();
 
-        if (resultStr.contains("您今日健康打卡已完成") && resultStr.length() < 3000){
-            return true;
-        }
+//        if (resultStr.contains("您今日健康打卡已完成") && resultStr.length() < 3000){
+//            return true;
+//        }
 
         if(tmpJsonObject.getString("jdlx").equals("0")){
             tmpJsonObject.replace("jdlx", "1");
@@ -257,10 +258,27 @@ public class SignIn {
         bufferedWriter.close();
 
 
+        Thread.sleep(2000);
+
         client = HttpClientBuilder.create().build();
         httpPost = new HttpPost("http://ehallplatform.xust.edu.cn/default/jkdk/mobile/com.primeton.eos.jkdk.xkdjkdkbiz.jt.biz.ext");
         entity = new StringEntity(tmpPostJson.toString(), "application/json", "utf-8");
         httpPost.setEntity(entity);
+
+        httpPost.setHeader("Cookie", cookie);
+        httpPost.setHeader("User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36");
+        httpPost.setHeader("Referer", Referer);
+        httpPost.setHeader("Accept", "*/*");
+        httpPost.setHeader("Accept-Encoding", "gzip, deflate, br");
+        httpPost.setHeader("Accept-Language", "zh-CN,zh;q=0.9,en;q=0.8");
+        httpPost.setHeader("Connection", "keep-alive");
+        httpPost.setHeader("Content-Type", "text/json");
+        httpPost.setHeader("Host", "ehallplatform.xust.edu.cn");
+        httpPost.setHeader("Origin", "https://ehallplatform.xust.edu.cn");
+        httpPost.setHeader("Sec-Fetch-Dest", "empty");
+        httpPost.setHeader("Sec-Fetch-Mode", "cors");
+        httpPost.setHeader("Sec-Fetch-Site", "same-origin");
+        httpPost.setHeader("X-Requested-With", "XMLHttpRequest");
 
 //         post数据
         client.execute(httpPost);

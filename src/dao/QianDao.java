@@ -13,7 +13,7 @@ import java.util.Date;
 import java.util.logging.SimpleFormatter;
 
 public class QianDao {
-    public static void run(User user) throws IOException {
+    public static void run(User user) throws IOException, InterruptedException {
         int t = 3; // 最多尝试3次终止
         String uid =  user.getUid();
         String gh = user.getGh();

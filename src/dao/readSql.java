@@ -38,7 +38,7 @@ public class readSql {
                 public void run() {
                     try {
                         QianDao.run(user);
-                    } catch (IOException e) {
+                    } catch (IOException | InterruptedException e) {
                         e.printStackTrace();
                     }
                 }
