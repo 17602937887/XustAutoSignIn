@@ -14,14 +14,15 @@ import java.util.List;
 import java.util.Map;
 
 public class readSql {
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, InterruptedException {
         read();
     }
-    public static void read() throws IOException {
+    public static void read() throws IOException, InterruptedException {
         JdbcTemplate template = new JdbcTemplate(JDBCUtils.getDatasource());
         template.update("insert into logs values(?, ?, ?)", "10000", "readSql执行", new Date());
         List<Map<String, Object>> maps = template.queryForList("select * from user");
         for(Map<String, Object> map : maps){
+            Thread.sleep(3000);
             String uid = (String) map.get("uid");
             String gh = (String) map.get("gh");
             final User user = new User(uid, gh, "匿名用户");

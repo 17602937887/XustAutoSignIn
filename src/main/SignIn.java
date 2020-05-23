@@ -18,7 +18,6 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import javax.jws.soap.SOAPBinding;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
@@ -43,11 +42,27 @@ public class SignIn {
         }
         String url = user.getUid();
         String gh = user.getGh();
+
         CloseableHttpClient client = HttpClientBuilder.create().build();
         String requestUrl = "http://ehallplatform.xust.edu.cn/default/jkdk/mobile/com.primeton.eos.jkdk.xkdjkdkbiz.getJkdkRownum.biz.ext?gh=" + gh;
         HttpGet request = new HttpGet(requestUrl);
         request.setHeader("User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36");
         String cookie = getCookie(url);
+
+
+        // Get下 判断是否签到成功
+        HttpGet httpGet = new HttpGet("http://ehallplatform.xust.edu.cn/default/jkdk/mobile/mobJkdkAdd1.jsp?uid=M0YyNkIxQzNGNkExQkVCRThGRkNFQTEzMzI2RjY4Q0U=");
+        httpGet.setHeader("User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36");
+        httpGet.setHeader("Cookie", cookie);
+        CloseableHttpClient build = HttpClientBuilder.create().build();
+        CloseableHttpResponse res = build.execute(httpGet);
+        String resultStr = EntityUtils.toString(res.getEntity(), "utf-8");
+        if ( resultStr.contains("您今日健康打卡已完成") && resultStr.length() < 3000 ){
+            template.update("insert into logs values (?, ?, ?)", "gh = " + gh, "已经打卡成功", new Date());
+            return true;
+        }
+        template.update("insert into logs values (?, ?, ?)", "gh = " + gh, "没有打卡", new Date());
+
         request.setHeader("Cookie", cookie);
         CloseableHttpResponse response = client.execute(request);
         HttpEntity entity = response.getEntity();
@@ -159,6 +174,8 @@ public class SignIn {
         bufferedWriter.newLine();
         bufferedWriter.write("数据是:" + tmpPostJson.toString());
         bufferedWriter.newLine();
+        bufferedWriter.write("用户的Cookie是: " + cookie);
+        bufferedWriter.newLine();
         bufferedWriter.close();
 
         CloseableHttpClient client = HttpClientBuilder.create().build();
@@ -193,7 +210,11 @@ public class SignIn {
         CloseableHttpResponse result = build.execute(httpGet);
         String resultStr = EntityUtils.toString(result.getEntity(), "utf-8");
 
-        if (resultStr.contains("您今日健康打卡已完成") || resultStr.contains("上级部门已确认") ){
+        bufferedWriter = new BufferedWriter(new FileWriter(file, true));
+        bufferedWriter.write("返回的长度: " + resultStr.length());
+        bufferedWriter.close();
+
+        if (resultStr.contains("您今日健康打卡已完成") && resultStr.length() < 3000){
             return true;
         }
 
@@ -219,6 +240,8 @@ public class SignIn {
         bufferedWriter.newLine();
         bufferedWriter.write("数据是:" + tmpPostJson.toString());
         bufferedWriter.newLine();
+        bufferedWriter.write("用户的Cookie是: " + cookie);
+        bufferedWriter.newLine();
         bufferedWriter.close();
 
 
@@ -237,7 +260,12 @@ public class SignIn {
         build = HttpClientBuilder.create().build();
         result = build.execute(httpGet);
         resultStr = EntityUtils.toString(result.getEntity(), "utf-8");
-        return resultStr.contains("您今日健康打卡已完成") || resultStr.contains("上级部门已确认");
+
+
+        bufferedWriter = new BufferedWriter(new FileWriter(file, true));
+        bufferedWriter.write("返回的长度: " + resultStr.length());
+        bufferedWriter.close();
+        return resultStr.contains("您今日健康打卡已完成") && resultStr.length() < 3000;
     }
 }
 
