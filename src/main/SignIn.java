@@ -36,10 +36,6 @@ public class SignIn {
     public static boolean start(User user) throws IOException {
         JdbcTemplate template = new JdbcTemplate(JDBCUtils.getDatasource());
         template.update("insert into logs values(?, ?, ?)", "10000", "SignIn执行" + user.getName(), new Date());
-        File file = new File("demo.txt");
-        if(!file.exists()){
-            file.createNewFile();
-        }
         String url = user.getUid();
         String gh = user.getGh();
 
@@ -51,12 +47,28 @@ public class SignIn {
 
 
         // Get下 判断是否签到成功
-        HttpGet httpGet = new HttpGet("http://ehallplatform.xust.edu.cn/default/jkdk/mobile/mobJkdkAdd1.jsp?uid=M0YyNkIxQzNGNkExQkVCRThGRkNFQTEzMzI2RjY4Q0U=");
+        System.out.println(getUidSuffix(url));
+        HttpGet httpGet = new HttpGet(getUidSuffix(url));
         httpGet.setHeader("User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36");
         httpGet.setHeader("Cookie", cookie);
         CloseableHttpClient build = HttpClientBuilder.create().build();
         CloseableHttpResponse res = build.execute(httpGet);
         String resultStr = EntityUtils.toString(res.getEntity(), "utf-8");
+
+
+
+        // 测试
+//        BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter("ceshi.txt"));
+//        bufferedWriter.write(resultStr);
+//        bufferedWriter.newLine();
+//        bufferedWriter.write(cookie);
+//        bufferedWriter.close();
+//        System.out.println(cookie);
+//        if(1 == 1){
+//            return true;
+//        }
+        //
+
         if ( resultStr.contains("您今日健康打卡已完成") && resultStr.length() < 3000 ){
             template.update("insert into logs values (?, ?, ?)", "gh = " + gh, "已经打卡成功", new Date());
             return true;
@@ -203,7 +215,7 @@ public class SignIn {
         client.execute(httpPost);
 
         // 重新Get下 判断是否签到成功
-        HttpGet httpGet = new HttpGet("http://ehallplatform.xust.edu.cn/default/jkdk/mobile/mobJkdkAdd1.jsp?uid=M0YyNkIxQzNGNkExQkVCRThGRkNFQTEzMzI2RjY4Q0U=");
+        HttpGet httpGet = new HttpGet(getUidSuffix(user.getUid()));
         httpGet.setHeader("User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36");
         httpGet.setHeader("Cookie", cookie);
         CloseableHttpClient build = HttpClientBuilder.create().build();
@@ -254,7 +266,7 @@ public class SignIn {
         client.execute(httpPost);
 
         // 重新Get下 判断是否签到成功
-        httpGet = new HttpGet("http://ehallplatform.xust.edu.cn/default/jkdk/mobile/mobJkdkAdd1.jsp?uid=M0YyNkIxQzNGNkExQkVCRThGRkNFQTEzMzI2RjY4Q0U=");
+        httpGet = new HttpGet(getUidSuffix(user.getUid()));
         httpGet.setHeader("User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36");
         httpGet.setHeader("Cookie", cookie);
         build = HttpClientBuilder.create().build();
@@ -266,6 +278,10 @@ public class SignIn {
         bufferedWriter.write("返回的长度: " + resultStr.length());
         bufferedWriter.close();
         return resultStr.contains("您今日健康打卡已完成") && resultStr.length() < 3000;
+    }
+
+    public static String getUidSuffix(String target){
+        return "http://ehallplatform.xust.edu.cn/default/jkdk/mobile/mobJkdkAdd1.jsp?" + target.substring(target.indexOf("uid="), target.length());
     }
 }
 
