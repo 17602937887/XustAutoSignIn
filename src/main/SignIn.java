@@ -29,7 +29,7 @@ import java.util.Set;
 public class SignIn {
 
     public static void main(String[] args) throws IOException, InterruptedException {
-        User user = new User("http://ehallplatform.xust.edu.cn/default/jkdk/mobile/mobJkdkAdd_test.jsp?uid=M0YyNkIxQzNGNkExQkVCRThGRkNFQTEzMzI2RjY4Q0U=", "16407020419", "陈航");
+        User user = new User("http://ehallplatform.xust.edu.cn/default/jkdk/mobile/mobJkdkAdd.jsp?uid=MjYzNUJBQjA2RTU5OUI1RTFGMDQxMzVGNzk3RjlGNzc=", "16407020422", "曹博");
         System.out.println(start(user));
     }
 
@@ -165,6 +165,13 @@ public class SignIn {
         template.update("update user set name = ? where gh = ?", tmpJsonObject.getString("xm"), tmpJsonObject.getString("gh"));
         template.update("insert into logs values(?, ?, ?)", "name = " + tmpJsonObject.getString("xm"), "gh = " + tmpJsonObject.getString("gh") + "执行了增加姓名操作", new Date());
 
+        // 测试
+        if(tmpJsonObject.getString("jdlx").equals("0")){
+            tmpJsonObject.replace("jdlx", "1");
+        }
+        //
+
+
         JSONObject postJson = new JSONObject();
         postJson.put("xkdjkdk", jsonObject);
 
@@ -226,6 +233,10 @@ public class SignIn {
         bufferedWriter.write("返回的长度: " + resultStr.length());
         bufferedWriter.newLine();
         bufferedWriter.close();
+
+        if(1 == 1){
+            return true;
+        }
 
 //        if (resultStr.contains("您今日健康打卡已完成") && resultStr.length() < 3000){
 //            return true;
