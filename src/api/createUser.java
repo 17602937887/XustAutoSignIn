@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -32,22 +33,24 @@ public class createUser extends HttpServlet {
             if((!uid.contains("http://ehallplatform.xust.edu.cn")) && (!uid.contains("https://ehallplatform.xust.edu.cn"))){
                 response.sendRedirect("/failed.html");
             } else {
-                User user = new User(uid, gh, "匿名用户");
-                boolean flag = Create.create(user);
-                Map<String, Boolean> map = new HashMap<>();
-                ObjectMapper mapper = new ObjectMapper();
-                if(flag){
-                    map.put("success", true);
-                } else {
-                    map.put("success",  false);
+                User user = new User(uid, gh, getUserName.getUsername(uid, gh));
+                Create.create(user); // 创建用户
+                SimpleDateFormat sdf = new SimpleDateFormat("HH");
+                String hour = sdf.format(new Date());
+                int now = Integer.parseInt(hour);
+                int flag = 0;
+                if( (now >= 0 && now <= 7) || (now >= 18 && now <= 24) ){ // 代表晚上的打卡
+                    flag = 2;
+                } else if(now >= 11 && now <= 13){ // 代表早上的打卡
+                    flag = 1;
                 }
+                // 如果用户在打卡时间段内注册账号 则直接为其打卡一次;
                 try {
-                    QianDao.run(user);
+                    QianDao.run(user, flag);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
                 response.sendRedirect("/success.html");
-                response.getWriter().write(mapper.writeValueAsString(map));
             }
         }
     }

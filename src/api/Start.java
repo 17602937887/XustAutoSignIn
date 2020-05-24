@@ -16,12 +16,8 @@ import java.util.Date;
 public class Start extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         JdbcTemplate template = new JdbcTemplate(JDBCUtils.getDatasource());
-        template.update("insert into logs values(?, ?, ?)", "10000", "签到1执行", new Date());
-        try {
-            readSql.read();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        template.update("insert into logs values(?, ?, ?)", "10000", "签到开始执行", new Date());
+        readSql.read();
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

@@ -44,7 +44,7 @@ public class SignInNight {
                 val /= 10;
             }
             String gh = sb.reverse().toString();
-            System.out.println("i = " + sb.toString() + "  check = " + check(new User("demo", gh, "name"), "JSESSIONID=134910543A9182F716ECFA543F3EF77F"));
+            System.out.println("i = " + sb.toString() + "  check = " + check(new User("demo", gh, "name"), "JSESSIONID=B6EB7EB3D372AA9F0F91215B7AF2C85F"));
         }
     }
 

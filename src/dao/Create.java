@@ -6,7 +6,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 public class Create {
     public static boolean create(User user){
-        JdbcTemplate template = new JdbcTemplate(JDBCUtils.getDatasource());
         if(Find.find(user)){
             Delete.delete(user);
         }
