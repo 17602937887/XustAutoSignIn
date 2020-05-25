@@ -25,11 +25,12 @@ public class createUser extends HttpServlet {
             response.setContentType("application/json; charset=utf-8");
             String uid = request.getParameter("uid");
             String gh = request.getParameter("gh");
+            String in = request.getParameter("in");
             if((!uid.contains("http://ehallplatform.xust.edu.cn")) && (!uid.contains("https://ehallplatform.xust.edu.cn"))){
                 response.sendRedirect("/failed.html");
             } else {
                 Map<String, String> map = getUserMsg.getUsername(uid, gh);
-                User user = new User(uid, gh, map.get("name"), map.get("phone"));
+                User user = new User(uid, gh, map.get("name"), map.get("phone"), in);
                 Create.create(user); // 创建用户
                 SendSuccessSms.sendSms(user.getName(), user.getPhone());
                 SimpleDateFormat sdf = new SimpleDateFormat("HH");

@@ -6,6 +6,7 @@ import main.SignIn;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.jws.soap.SOAPBinding;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -39,14 +40,33 @@ public class readSql {
             String gh = (String) map.get("gh");
             String name = (String) map.get("name");
             String phone = (String) map.get("phone");
-            final User user = new User(uid, gh, name, phone);
+            String in = (String) map.get("in");
+            final User user = new User(uid, gh, name, phone, in);
             new Thread(new Runnable() {
                 @Override
                 public void run() {
                     try {
                         QianDao.run(user, tmp_flag);
                     } catch (IOException | InterruptedException e) {
-                        e.printStackTrace();
+                        File logs = new File("logs");
+                        if(!logs.exists()){
+                            logs.mkdir();
+                        }
+                        File file = new File(logs + File.separator + "Exception.txt");
+                        if(!file.exists()){
+                            try {
+                                file.createNewFile();
+                            } catch (IOException ex) {
+                                ex.printStackTrace();
+                            }
+                        }
+                        try {
+                            BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file));
+                            bufferedWriter.write(Exception.getExceptionToString(e));
+                            bufferedWriter.close();
+                        } catch (IOException ex) {
+                            ex.printStackTrace();
+                        }
                     }
                 }
             }).start();

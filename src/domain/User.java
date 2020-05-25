@@ -5,12 +5,17 @@ public class User {
     private String gh;
     private String name;
     private String phone = "17602937887";
+    private String in = "1";
 
-    public User(String uid, String gh, String name, String phone) {
+    public User() {
+    }
+
+    public User(String uid, String gh, String name, String phone, String in) {
         this.uid = uid;
         this.gh = gh;
         this.name = name;
         this.phone = phone;
+        this.in = in;
     }
 
     public String getUid() {
@@ -45,6 +50,14 @@ public class User {
         this.phone = phone;
     }
 
+    public String getIn() {
+        return in;
+    }
+
+    public void setIn(String in) {
+        this.in = in;
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -52,6 +65,7 @@ public class User {
                 ", gh='" + gh + '\'' +
                 ", name='" + name + '\'' +
                 ", phone='" + phone + '\'' +
+                ", in='" + in + '\'' +
                 '}';
     }
 }

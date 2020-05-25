@@ -13,6 +13,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.io.BufferedWriter;
@@ -21,10 +22,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Set;
+import java.util.*;
 
 public class SignInAfternoon {
 
@@ -32,7 +30,7 @@ public class SignInAfternoon {
 //        User user = new User("http://ehallplatform.xust.edu.cn/default/jkdk/mobile/mobJkdkAdd.jsp?uid=MjYzNUJBQjA2RTU5OUI1RTFGMDQxMzVGNzk3RjlGNzc=", "16407020422", "曹博");
 //        System.out.println(start(user));
 //        System.out.println(start(new User("http://ehallplatform.xust.edu.cn/default/jkdk/mobile/mobJkdkAdd_test.jsp?uid=M0YyNkIxQzNGNkExQkVCRThGRkNFQTEzMzI2RjY4Q0U=", "16407020419", "陈航")));
-        text();
+        text2();
     }
 
     public static void text() throws IOException {
@@ -43,8 +41,18 @@ public class SignInAfternoon {
                 sb.append(((int) (val % 10)));
                 val /= 10;
             }
+            String cookie = getCookie("http://ehallplatform.xust.edu.cn/default/jkdk/mobile/mobJkdkAdd.jsp?uid=MjYzNUJBQjA2RTU5OUI1RTFGMDQxMzVGNzk3RjlGNzc=");
             String gh = sb.reverse().toString();
-            System.out.println("i = " + sb.toString() + "  check = " + check(new User("demo", gh, "name", "17602937887"), getCookie("http://ehallplatform.xust.edu.cn/default/jkdk/mobile/mobJkdkAdd.jsp?uid=MjYzNUJBQjA2RTU5OUI1RTFGMDQxMzVGNzk3RjlGNzc=")));
+            System.out.println("i = " + sb.toString() + "  check = " + check(new User("demo", gh, "name", "17602937887", "1"), cookie));
+        }
+    }
+
+    public static void text2() throws IOException {
+        String cookie = getCookie("http://ehallplatform.xust.edu.cn/default/jkdk/mobile/mobJkdkAdd.jsp?uid=MjYzNUJBQjA2RTU5OUI1RTFGMDQxMzVGNzk3RjlGNzc=");
+        JdbcTemplate template = new JdbcTemplate(JDBCUtils.getDatasource());
+        List<User> query = template.query("select * from user", new BeanPropertyRowMapper<>(User.class));
+        for(User user : query){
+            System.out.println(user.getName() + " = " + check(user, cookie));
         }
     }
 
@@ -67,8 +75,8 @@ public class SignInAfternoon {
         request.setHeader("User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36");
         String cookie = getCookie(user.getUid());
 
-        // 提前check一下 如果已经打过卡了 则直接return;
-        if(check(user, cookie)){
+        // 提前check一下 如果已经打过卡了 或者为没有返校的 则直接return;
+        if(user.getIn().equals("2") || check(user, cookie)){
             template.update("insert into logs values(?, ?, ?)",  "学号:" + user.getGh() + " 姓名:" + user.getName(), "判断为中午打卡成功,直接返回", new Date());
             return true;
         }
@@ -167,7 +175,7 @@ public class SignInAfternoon {
         bufferedWriter.newLine();
         bufferedWriter.write("数据是:" + tmpPostJson.toString());
         bufferedWriter.newLine();
-        bufferedWriter.write("用户的Cookie是: " + cookie);
+        bufferedWriter.write("用户的Cookie是: " + cookie + " 是否返校:" + (user.getIn().equals("1") ? "返校" : "在家"));
         bufferedWriter.newLine();
         bufferedWriter.close();
 

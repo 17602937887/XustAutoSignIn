@@ -22,7 +22,7 @@ public class DeleteUser extends HttpServlet {
         response.setContentType("application/json; charset=utf-8");
         String uid = request.getParameter("uid");
         String gh = request.getParameter("gh");
-        User user = new User(uid, gh, "匿名用户", "10086");
+        User user = new User(uid, gh, "匿名用户", "10086", "1");
         Map<String, Boolean> map = new HashMap<>();
         ObjectMapper mapper = new ObjectMapper();
         if(!Find.find(user)){

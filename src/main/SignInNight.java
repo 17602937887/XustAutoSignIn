@@ -44,7 +44,7 @@ public class SignInNight {
                 val /= 10;
             }
             String gh = sb.reverse().toString();
-            System.out.println("i = " + sb.toString() + "  check = " + check(new User("demo", gh, "name", "17602937887"), getCookie("http://ehallplatform.xust.edu.cn/default/jkdk/mobile/mobJkdkAdd_test.jsp?uid=M0YyNkIxQzNGNkExQkVCRThGRkNFQTEzMzI2RjY4Q0U=")));
+            System.out.println("i = " + sb.toString() + "  check = " + check(new User("demo", gh, "name", "17602937887", "1"), getCookie("http://ehallplatform.xust.edu.cn/default/jkdk/mobile/mobJkdkAdd_test.jsp?uid=M0YyNkIxQzNGNkExQkVCRThGRkNFQTEzMzI2RjY4Q0U=")));
         }
     }
 
@@ -67,8 +67,8 @@ public class SignInNight {
         request.setHeader("User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36");
         String cookie = getCookie(user.getUid());
 
-        // 提前check一下 如果已经打过卡了 则直接return;
-        if(check(user, cookie)){
+        // 提前check一下 如果已经打过卡 而且为在校的 则直接return;
+        if(user.getIn().equals("1") && check(user, cookie)){
             template.update("insert into logs values(?, ?, ?)",  "学号:" + user.getGh() + " 姓名:" + user.getName(), "判断为晚上打卡成功,直接返回", new Date());
             return true;
         }
@@ -167,7 +167,7 @@ public class SignInNight {
         bufferedWriter.newLine();
         bufferedWriter.write("数据是:" + tmpPostJson.toString());
         bufferedWriter.newLine();
-        bufferedWriter.write("用户的Cookie是: " + cookie);
+        bufferedWriter.write("用户的Cookie是: " + cookie + " 是否返校:" + (user.getIn().equals("1") ? "返校" : "在家"));
         bufferedWriter.newLine();
         bufferedWriter.close();
 

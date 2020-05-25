@@ -39,7 +39,8 @@ public class showAllUser extends HttpServlet {
             String gh = (String) map.get("gh");
             String name = (String) map.get("name");
             String phone = (String) map.get("phone");
-            allUser.add(new User(uid, gh, name, phone));
+            String in = (String) map.get("in");
+            allUser.add(new User(uid, gh, name, phone, in));
         }
         request.setAttribute("allUser", allUser);
         request.getRequestDispatcher("/showAllUser.jsp").forward(request, response);
