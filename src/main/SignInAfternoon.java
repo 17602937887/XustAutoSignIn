@@ -29,9 +29,10 @@ import java.util.Set;
 public class SignInAfternoon {
 
     public static void main(String[] args) throws IOException, InterruptedException {
-        User user = new User("http://ehallplatform.xust.edu.cn/default/jkdk/mobile/mobJkdkAdd.jsp?uid=MjYzNUJBQjA2RTU5OUI1RTFGMDQxMzVGNzk3RjlGNzc=", "16407020422", "曹博");
-        System.out.println(start(user));
-        System.out.println(start(new User("http://ehallplatform.xust.edu.cn/default/jkdk/mobile/mobJkdkAdd_test.jsp?uid=M0YyNkIxQzNGNkExQkVCRThGRkNFQTEzMzI2RjY4Q0U=", "16407020419", "陈航")));
+//        User user = new User("http://ehallplatform.xust.edu.cn/default/jkdk/mobile/mobJkdkAdd.jsp?uid=MjYzNUJBQjA2RTU5OUI1RTFGMDQxMzVGNzk3RjlGNzc=", "16407020422", "曹博");
+//        System.out.println(start(user));
+//        System.out.println(start(new User("http://ehallplatform.xust.edu.cn/default/jkdk/mobile/mobJkdkAdd_test.jsp?uid=M0YyNkIxQzNGNkExQkVCRThGRkNFQTEzMzI2RjY4Q0U=", "16407020419", "陈航")));
+        text();
     }
 
     public static void text() throws IOException {
@@ -43,7 +44,7 @@ public class SignInAfternoon {
                 val /= 10;
             }
             String gh = sb.reverse().toString();
-            System.out.println("i = " + sb.toString() + "  check = " + check(new User("demo", gh, "name"), "JSESSIONID=134910543A9182F716ECFA543F3EF77F"));
+            System.out.println("i = " + sb.toString() + "  check = " + check(new User("demo", gh, "name", "17602937887"), getCookie("http://ehallplatform.xust.edu.cn/default/jkdk/mobile/mobJkdkAdd.jsp?uid=MjYzNUJBQjA2RTU5OUI1RTFGMDQxMzVGNzk3RjlGNzc=")));
         }
     }
 

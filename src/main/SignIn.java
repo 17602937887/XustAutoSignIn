@@ -29,7 +29,7 @@ import java.util.Set;
 public class SignIn {
 
     public static void main(String[] args) throws IOException, InterruptedException {
-        User user = new User("http://ehallplatform.xust.edu.cn/default/jkdk/mobile/mobJkdkAdd.jsp?uid=MjYzNUJBQjA2RTU5OUI1RTFGMDQxMzVGNzk3RjlGNzc=", "16407020422", "曹博");
+        User user = new User("http://ehallplatform.xust.edu.cn/default/jkdk/mobile/mobJkdkAdd.jsp?uid=MjYzNUJBQjA2RTU5OUI1RTFGMDQxMzVGNzk3RjlGNzc=", "16407020422", "曹博", "17602937887");
         System.out.println(start(user));
     }
 

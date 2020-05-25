@@ -44,7 +44,7 @@ public class SignInNight {
                 val /= 10;
             }
             String gh = sb.reverse().toString();
-            System.out.println("i = " + sb.toString() + "  check = " + check(new User("demo", gh, "name"), "JSESSIONID=B6EB7EB3D372AA9F0F91215B7AF2C85F"));
+            System.out.println("i = " + sb.toString() + "  check = " + check(new User("demo", gh, "name", "17602937887"), getCookie("http://ehallplatform.xust.edu.cn/default/jkdk/mobile/mobJkdkAdd_test.jsp?uid=M0YyNkIxQzNGNkExQkVCRThGRkNFQTEzMzI2RjY4Q0U=")));
         }
     }
 

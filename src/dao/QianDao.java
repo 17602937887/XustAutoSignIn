@@ -6,6 +6,7 @@ import main.SignIn;
 import main.SignInAfternoon;
 import main.SignInNight;
 import org.springframework.jdbc.core.JdbcTemplate;
+import sms.SendFailedSms;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -31,8 +32,9 @@ public class QianDao {
         }
 
         JdbcTemplate template = new JdbcTemplate(JDBCUtils.getDatasource());
-        if(t == 0){ // 此用户自动签到失败了 打出到日志
+        if(t == 0){ // 此用户自动签到失败了 打出到日志 并发送短信提醒
             template.update("insert into logs values(?, ?, ?)", "学号:" + user.getGh() + " 姓名:" + user.getName(), "failed", new Date());
+            SendFailedSms.sendSms(user.getName(), user.getPhone());
         } else {
             template.update("insert into logs values(?, ?, ?)", "学号:" + user.getGh() + " 姓名:" + user.getName(), "success", new Date());
         }

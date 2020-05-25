@@ -3,15 +3,14 @@ package domain;
 public class User {
     private String uid;
     private String gh;
-    private String name = "匿名用户";
+    private String name;
+    private String phone = "17602937887";
 
-    public User() {
-    }
-
-    public User(String uid, String gh, String name) {
+    public User(String uid, String gh, String name, String phone) {
         this.uid = uid;
         this.gh = gh;
         this.name = name;
+        this.phone = phone;
     }
 
     public String getUid() {
@@ -38,12 +37,21 @@ public class User {
         this.name = name;
     }
 
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
     @Override
     public String toString() {
         return "User{" +
                 "uid='" + uid + '\'' +
                 ", gh='" + gh + '\'' +
                 ", name='" + name + '\'' +
+                ", phone='" + phone + '\'' +
                 '}';
     }
 }

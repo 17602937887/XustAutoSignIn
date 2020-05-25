@@ -10,14 +10,17 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
-public class getUserName {
+public class getUserMsg {
     public static void main(String[] args) throws IOException {
-        String name = getUsername("http://ehallplatform.xust.edu.cn/default/jkdk/mobile/mobJkdkAdd_test.jsp?uid=M0YyNkIxQzNGNkExQkVCRThGRkNFQTEzMzI2RjY4Q0U=", "16407020419");
-        System.out.println(name);
+        Map<String, String> map = getUsername("http://ehallplatform.xust.edu.cn/default/jkdk/mobile/mobJkdkAdd_test.jsp?uid=M0YyNkIxQzNGNkExQkVCRThGRkNFQTEzMzI2RjY4Q0U=", "16407020419");
+        System.out.println(map.get("name"));
+        System.out.println(map.get("phone"));
     }
 
-    public static String getUsername(String url, String gh) throws IOException {
+    public static Map<String, String> getUsername(String url, String gh) throws IOException {
         String cookie = SignIn.getCookie(url);
         CloseableHttpClient build = HttpClientBuilder.create().build();
         HttpGet request = new HttpGet("http://ehallplatform.xust.edu.cn/default/jkdk/mobile/com.primeton.eos.jkdk.xkdjkdkbiz.getJkdkRownum.biz.ext?gh=" + gh);
@@ -28,6 +31,9 @@ public class getUserName {
         JSONObject jsonObject = JSONObject.parseObject(EntityUtils.toString(response.getEntity(), "utf-8"));
         JSONArray list = jsonObject.getJSONArray("list");
         JSONObject json = list.getJSONObject(0);
-        return json.getString("XM");
+        Map<String, String> map = new HashMap<>();
+        map.put("name", json.getString("XM"));
+        map.put("phone", json.getString("SJH2"));
+        return map;
     }
 }

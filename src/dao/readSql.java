@@ -38,7 +38,8 @@ public class readSql {
             String uid = (String) map.get("uid");
             String gh = (String) map.get("gh");
             String name = (String) map.get("name");
-            final User user = new User(uid, gh, name);
+            String phone = (String) map.get("phone");
+            final User user = new User(uid, gh, name, phone);
             new Thread(new Runnable() {
                 @Override
                 public void run() {

@@ -1,13 +1,9 @@
 package api;
 
-import JdbcUtils.JDBCUtils;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import dao.Create;
-import dao.Delete;
 import dao.QianDao;
 import domain.User;
-import main.SignIn;
-import org.springframework.jdbc.core.JdbcTemplate;
+import sms.SendSuccessSms;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -17,7 +13,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 
 @WebServlet("/createUser")
@@ -33,8 +28,10 @@ public class createUser extends HttpServlet {
             if((!uid.contains("http://ehallplatform.xust.edu.cn")) && (!uid.contains("https://ehallplatform.xust.edu.cn"))){
                 response.sendRedirect("/failed.html");
             } else {
-                User user = new User(uid, gh, getUserName.getUsername(uid, gh));
+                Map<String, String> map = getUserMsg.getUsername(uid, gh);
+                User user = new User(uid, gh, map.get("name"), map.get("phone"));
                 Create.create(user); // 创建用户
+                SendSuccessSms.sendSms(user.getName(), user.getPhone());
                 SimpleDateFormat sdf = new SimpleDateFormat("HH");
                 String hour = sdf.format(new Date());
                 int now = Integer.parseInt(hour);
