@@ -4,6 +4,8 @@ import JdbcUtils.JDBCUtils;
 import domain.User;
 import main.SignIn;
 import org.springframework.jdbc.core.JdbcTemplate;
+import sms.SendFailedSms;
+import sms.SendSuccessSms;
 
 import javax.jws.soap.SOAPBinding;
 import java.io.BufferedWriter;
@@ -14,9 +16,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 public class readSql {
-    public static void main(String[] args) throws IOException, InterruptedException {
+    public static void main(String[] args)  {
 
     }
     public static void read() throws IOException {
@@ -46,6 +49,7 @@ public class readSql {
                 @Override
                 public void run() {
                     try {
+                        Thread.sleep(new Random().nextInt(5000));
                         QianDao.run(user, tmp_flag);
                     } catch (IOException | InterruptedException e) {
                         File logs = new File("logs");
@@ -67,6 +71,8 @@ public class readSql {
                         } catch (IOException ex) {
                             ex.printStackTrace();
                         }
+                        // 可能由于某些原因失败 则通知用户
+                        SendFailedSms.sendSms(name, phone);
                     }
                 }
             }).start();

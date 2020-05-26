@@ -30,14 +30,18 @@
 			</svg>
 			<div class="form">
 				<form action="/createUser" method="post">
-					<label for="uid">您的UID</label>
-					<input type="text" id="uid" name="uid" placeholder="如:http://ehallplatform.xust.edu.cn/default/jkdk/mobile/mobJkdkAdd_test.jsp?uid=*******">
-					<label for="gh">您的学号</label>
-					<input type="text" id="gh" name="gh" placeholder="如:164070204**">
-					<label>是否在校:</label>
-<!--					<input class="me" type="radio" name="in" value="1" >是-->
-<!--					<input class="me" type="radio" name="in" value="2" >否-->
-					<input type="submit" id="submit" value="提交任务">
+					<label class="la" for="uid">您的UID</label>
+					<input class="in" type="text" id="uid" name="uid" placeholder="如:http://ehallplatform.xust.edu.cn/default/jkdk/mobile/mobJkdkAdd_test.jsp?uid=*******">
+					<label class="la" for="gh">您的学号</label>
+					<input class="in" type="text" id="gh" name="gh" placeholder="如:164070204**">
+					<label class="la">是否在校:</label>
+					<label for="radio_1" style="display: inline-block">
+						<text style="display: inline">是</text> <input type="radio" name="in" id="radio_1" value="1" style="display: inline"/>
+					</label>
+					<label for="radio_2" style="display: inline-block">
+						<text style="display: inline">否</text> <input type="radio" name="in" id="radio_2" value="2" style="display:inline;"/>
+					</label>
+					<input class="in" type="submit" id="submit" value="提交任务">
 				</form>
 			</div>
 		</div>
