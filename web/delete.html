@@ -2,21 +2,15 @@
 <html lang="zh-CN">
 <head>
 	<meta charset="utf-8">
-	<title>科大自动健康打卡</title>
+	<title>删除用户</title>
 	<link rel="stylesheet" href="css/dmaku.css">
 </head>
 <body>
 <div class="dowebok">
 	<div class="container">
 		<div class="left">
-			<div class="login">提交任务
-				<a href="/delete.html">删除任务</a>
-			</div>
-			<div class="eula">欢迎光临，请输入您的UID和学号以自动签到！<a href="/getUID.html"><font color="blue">获取UID的方法、点我</font></a>
-<!--				<br>-->
-<!--				<font color="#adff2f"><a href="/showAllUser">查看成功添加的用户信息</a></font>-->
-				<br>
-				<font style="color: darkorange; font-size: 16px">将于每天的11:45及17:15自动签到,望周知！</font>
+			<div class="login">删除任务</div>
+			<div class="eula">输入您的学号进行删除,有缘再见!</a>
 			</div>
 		</div>
 		<div class="right">
@@ -31,19 +25,10 @@
 				<path d="m 40,120.00016 239.99984,-3.2e-4 c 0,0 24.99263,0.79932 25.00016,35.00016 0.008,34.20084 -25.00016,35 -25.00016,35 h -239.99984 c 0,-0.0205 -25,4.01348 -25,38.5 0,34.48652 25,38.5 25,38.5 h 215 c 0,0 20,-0.99604 20,-25 0,-24.00396 -20,-25 -20,-25 h -190 c 0,0 -20,1.71033 -20,25 0,24.00396 20,25 20,25 h 168.57143" />
 			</svg>
 			<div class="form">
-				<form action="/createUser" method="post">
-					<label class="la" for="uid">您的UID</label>
-					<input class="in" type="text" id="uid" name="uid" placeholder="如:http://ehallplatform.xust.edu.cn/default/jkdk/mobile/mobJkdkAdd_test.jsp?uid=*******">
+				<form action="/delete" method="post">
 					<label class="la" for="gh">您的学号</label>
 					<input class="in" type="text" id="gh" name="gh" placeholder="如:164070204**">
-					<label class="la">目前一天打几次卡?:</label>
-					<label for="radio_1" style="display: inline-block">
-						<text style="display: inline">两次</text> <input type="radio" name="in" id="radio_1" value="1" style="display: inline"/>
-					</label>
-					<label for="radio_2" style="display: inline-block">
-						<text style="display: inline">一次</text> <input type="radio" name="in" id="radio_2" value="2" style="display:inline;"/>
-					</label>
-					<input class="in" type="submit" id="submit" value="提交任务">
+					<input class="in" type="submit" id="submit" value="删除任务">
 				</form>
 			</div>
 		</div>

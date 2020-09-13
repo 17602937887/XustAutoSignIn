@@ -26,6 +26,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Set;
 
+@SuppressWarnings("all")
 public class SignIn {
 
     public static void main(String[] args) throws IOException, InterruptedException {

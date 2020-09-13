@@ -1,0 +1,17 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="June3th">
+    <output-path>$PROJECT_DIR$/out/artifacts/June3th</output-path>
+    <root id="archive" name="June3th.war">
+      <element id="dir-copy" path="$PROJECT_DIR$/web" />
+      <element id="directory" name="WEB-INF">
+        <element id="directory" name="classes">
+          <element id="module-output" name="XustAutoSignIn" />
+        </element>
+        <element id="directory" name="lib">
+          <element id="library" level="project" name="lib (2)" />
+          <element id="library" level="project" name="lib" />
+        </element>
+      </element>
+    </root>
+  </artifact>
+</component>

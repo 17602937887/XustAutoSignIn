@@ -32,7 +32,9 @@ public class SignInNight {
 //        User user = new User("http://ehallplatform.xust.edu.cn/default/jkdk/mobile/mobJkdkAdd.jsp?uid=MjYzNUJBQjA2RTU5OUI1RTFGMDQxMzVGNzk3RjlGNzc=", "16407020422", "曹博");
 //        System.out.println(start(user));
 //        System.out.println(start(new User("http://ehallplatform.xust.edu.cn/default/jkdk/mobile/mobJkdkAdd_test.jsp?uid=M0YyNkIxQzNGNkExQkVCRThGRkNFQTEzMzI2RjY4Q0U=", "16407020419", "陈航")));
-        text();
+//        text();
+        String val = "2020-06-07 19:07:26";
+        System.out.println(val.substring(11, 13));
     }
 
     public static void text() throws IOException {
@@ -46,6 +48,17 @@ public class SignInNight {
             String gh = sb.reverse().toString();
             System.out.println("i = " + sb.toString() + "  check = " + check(new User("demo", gh, "name", "17602937887", "1"), getCookie("http://ehallplatform.xust.edu.cn/default/jkdk/mobile/mobJkdkAdd_test.jsp?uid=M0YyNkIxQzNGNkExQkVCRThGRkNFQTEzMzI2RjY4Q0U=")));
         }
+    }
+
+    public static String getLastTime(User user, String cookie) throws IOException {
+        CloseableHttpClient build = HttpClientBuilder.create().build();
+        HttpGet request = new HttpGet("http://ehallplatform.xust.edu.cn/default/jkdk/mobile/com.primeton.eos.jkdk.xkdjkdkbiz.getJkdkRownum.biz.ext?gh=" + user.getGh());
+        request.setHeader("User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36");
+        request.setHeader("Cookie", cookie);
+        CloseableHttpResponse result = build.execute(request);
+        String resultStr = EntityUtils.toString(result.getEntity(), "utf-8");
+        String str = JSONObject.parseObject(resultStr).getJSONArray("list").getJSONObject(0).getString("TBSJ");
+        return str;
     }
 
     public static boolean check(User user, String cookie) throws IOException {
@@ -67,9 +80,15 @@ public class SignInNight {
         request.setHeader("User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36");
         String cookie = getCookie(user.getUid());
 
+        // 获取上次打卡时间
+        String lastTime = getLastTime(user, cookie);
+        //
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        int hh = Integer.parseInt(lastTime.substring(11, 13));
+
         // 提前check一下 如果已经打过卡 而且为在校的 则直接return;
-        if(user.getIn().equals("1") && check(user, cookie)){
-            template.update("insert into logs values(?, ?, ?)",  "学号:" + user.getGh() + " 姓名:" + user.getName(), "判断为晚上打卡成功,直接返回", new Date());
+        if( (user.getIn().equals("1") && check(user, cookie) && lastTime.substring(0, 10).equals(sdf.format(new Date()))) || ((user.getIn().equals("2") && check(user, cookie) && lastTime.substring(0, 10).equals(sdf.format(new Date()))))){
+            template.update("insert into logs values(?, ?, ?)",  "学号:" + user.getGh() + " 姓名:" + user.getName(), "晚上打卡成功,时间为" + lastTime, new Date());
             return true;
         }
 
@@ -138,8 +157,24 @@ public class SignInNight {
         tmpJsonObject.put("tbsj", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
         tmpJsonObject.put("time", nowDay);
         tmpJsonObject.put("guo", "中国");
-        tmpJsonObject.remove("procinstid");
-        tmpJsonObject.remove("id");
+        tmpJsonObject.put("procinstid", "");
+        tmpJsonObject.put("id", "");
+        tmpJsonObject.put("glkssj131", "");
+        tmpJsonObject.put("gljssj132", "");
+        tmpJsonObject.put("qtxx15", null);
+        tmpJsonObject.put("sfzh", "");
+        tmpJsonObject.put("zy", "");
+        tmpJsonObject.put("zydm", "");
+        tmpJsonObject.put("jg", "");
+        tmpJsonObject.put("yx", "");
+        tmpJsonObject.put("fcjtgj17Qt", "");
+        tmpJsonObject.put("fcjtgj17", "");
+        tmpJsonObject.put("ymtys", "");
+        if(tmpJsonObject.getString("jrtwfw5").equals("36.0-37.2℃，正常体温")){
+            tmpJsonObject.replace("jrtwfw5", "正常体温:36～37.2℃");
+        }
+//        tmpJsonObject.remove("procinstid");
+//        tmpJsonObject.remove("id");
 
         //  这里一定要加 早上打的数据是 1， 晚上打的数据是0， 鬼知道这个玩意的开发者定义啥意思
         if(tmpJsonObject.getString("jdlx").equals("1")){
@@ -158,12 +193,12 @@ public class SignInNight {
         if(!Dir.exists()){
             Dir.mkdir();
         }
-        File file = new File(Dir + File.separator + "logs.txt");
+        File file = new File(Dir + File.separator + sdf.format(new Date()).toString() + "_logs.txt");
         if(!file.exists()){
             file.createNewFile();
         }
         BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file, true));
-        bufferedWriter.write("学号: " + tmpJsonObject.getString("gh") + " 姓名: " + tmpJsonObject.getString("xm") + " 在" + new Date() + "进行了SingnIn操作");
+        bufferedWriter.write("学号: " + tmpJsonObject.getString("gh") + " 姓名: " + tmpJsonObject.getString("xm") + " 在" + sdf.format(new Date()) + "进行了SingnIn操作");
         bufferedWriter.newLine();
         bufferedWriter.write("数据是:" + tmpPostJson.toString());
         bufferedWriter.newLine();

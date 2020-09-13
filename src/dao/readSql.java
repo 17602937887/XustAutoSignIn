@@ -27,9 +27,9 @@ public class readSql {
         String hour = sdf.format(new Date());
         int now = Integer.parseInt(hour);
         int flag = 0;
-        if( (now >= 0 && now <= 7) || (now >= 18 && now <= 24) ){ // 代表晚上的打卡
+        if( (now >= 0 && now <= 7) || (now >= 17 && now <= 24) ){ // 代表晚上的打卡
             flag = 2;
-        } else if(now >= 11 && now <= 13){ // 代表早上的打卡
+        } else if(now >= 11 && now <= 14){ // 代表早上的打卡
             flag = 1;
         }
         if(flag == 0){ // 非打卡时间段内触发 直接return
@@ -49,7 +49,7 @@ public class readSql {
                 @Override
                 public void run() {
                     try {
-                        Thread.sleep(new Random().nextInt(5000));
+                        Thread.sleep(new Random().nextInt(10000));
                         QianDao.run(user, tmp_flag);
                     } catch (IOException | InterruptedException e) {
                         File logs = new File("logs");
