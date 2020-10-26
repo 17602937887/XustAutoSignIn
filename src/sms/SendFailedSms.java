@@ -31,7 +31,7 @@ public class SendFailedSms {
         SimpleDateFormat sdf = new SimpleDateFormat(strDateFormat);
         String time = sdf.format(new Date());
 
-        DefaultProfile profile = DefaultProfile.getProfile("cn-hangzhou", "LTAIlHdZZxWKDTW3", "yS9KudRRWfBTxzNywTBPPsxYBuVhqh");
+        DefaultProfile profile = DefaultProfile.getProfile("cn-hangzhou", "你的key", "你的密钥");
         IAcsClient client = new DefaultAcsClient(profile);
 
         CommonRequest request = new CommonRequest();

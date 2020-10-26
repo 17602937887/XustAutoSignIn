@@ -10,7 +10,7 @@ import com.aliyuncs.profile.DefaultProfile;
 
 public class SendSuccessSms {
     public static void sendSms(String name, String phone) {
-        DefaultProfile profile = DefaultProfile.getProfile("cn-hangzhou", "LTAIlHdZZxWKDTW3", "yS9KudRRWfBTxzNywTBPPsxYBuVhqh");
+        DefaultProfile profile = DefaultProfile.getProfile("cn-hangzhou", "你的key", "你的密钥");
         IAcsClient client = new DefaultAcsClient(profile);
 
         CommonRequest request = new CommonRequest();
